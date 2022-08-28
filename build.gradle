@@ -1,0 +1,55 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.3'
+	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+	id 'java'
+}
+
+group = 'com.dz8'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+	compileOnly 'org.projectlombok:lombok'
+
+	implementation 'mysql:mysql-connector-java:8.0.30'
+// https://mvnrepository.com/artifact/mysql/mysql-connector-java
+	//implementation 'mysql:mysql-connector-java:6.0.6'
+	implementation "org.flywaydb:flyway-mysql"
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-core
+	implementation 'org.springframework.security:spring-security-core:5.7.3'
+
+}
+
+jar {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	manifest {
+		attributes 'Main-Class': 'com.dz8.demo.Dz8Application'
+	}
+
+	from {
+		//configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+}

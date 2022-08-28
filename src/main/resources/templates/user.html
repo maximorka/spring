@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <title>User</title>
+</head>
+<body>
+
+<!-- create navigation bar ( header) -->
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <ul class="nav nav-pills">
+            <li sec:authorize="!isAuthenticated()" class="nav-item"><a href="/login" class="nav-link " >Sing in/sing up</a></li>
+            <li class="nav-item"><a href="/" class="nav-link " aria-current="page">Main</a></li>
+            <li class="nav-item"><a href="/product" class="nav-link ">Product</a></li>
+            <li class="nav-item"><a href="/manufacturer" class="nav-link">Manufacturer</a></li>
+            <li sec:authorize="hasAuthority('ADMIN')" class="nav-item"><a href="/user" class="nav-link active">User</a></li>
+            <li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></li>
+        </ul>
+    </div>
+</nav>
+<div class="border-bottom" ></div>
+<br>
+
+<div class="container-md">
+    <br>
+    <div class="row">
+        <div class="container">
+            <h1 class="card-title">List of Users</h1>
+            <hr>
+
+            <br>
+            <table class="table table-bordered">
+                <thead>
+                <tr class="table-secondary">
+                    <th>ID</th>
+                    <th>FirstName</th>
+                    <th>LastName</th>
+                    <th>Email</th>
+                    <th>Roles</th>
+                    <th style="width:20%">Actions</th>
+
+                </tr>
+                </thead>
+                <tbody class="table-light">
+                <tr th:each="u : ${AllUsers}">
+                    <td th:text="${u.id}"></td>
+                    <td th:text="${u.firstName}"></td>
+                    <td th:text="${u.lastName}"></td>
+                    <td th:text="${u.email}"></td>
+                    <td th:text="${u.roles}"></td>
+
+                        <td>
+                            <form  th:action="@{/user/delete}" method = "POST">
+                                <input type="hidden" th:value="${u.id}" name ="id">
+                                <button class="btn btn-outline-secondary" type="submit">Delete</button>
+                            </form>
+
+                            <a class="btn btn-outline-secondary" role="button"
+                               th:href="'/user/edit/'+ ${u.id}">Edit</a>
+                        </td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+    <div  class="card-body">
+        <div th:if="${userEditId ==null}">
+            <h1 class="card-title">User Registration</h1>
+            <br>
+            <div class="mb-3">
+                <form action="#" th:action="@{/user}"method="post" th:object="${user}">
+                    <label class="col-form-label">FirstName:</label>
+                    <input class="form-control form-control-sm" type="text" th:field="*{firstName}"/><br/>
+
+                    <label class="col-form-label">LastName:</label>
+                    <input class="form-control form-control-sm" type="text" th:field="*{lastName}"/><br/>
+
+                    <label class="col-form-label">Email:</label>
+                    <input class="form-control form-control-sm" type="text" th:field="*{email}"/><br/>
+
+                    <label class="control-label" for="password"> Password </label>
+                    <input id="password" class="form-control" type="password" th:field="*{password}"  />
+
+                    <div class="form-group">
+                        <label class="col-form-label">Roles:</label> <br>
+                        <input class="form-check-input" type="checkbox" name="roles"
+                               th:each="role : ${roles}"
+                               th:text="${role.name}"
+                               th:value="${role.id}"
+                               th:field="*{roles}"/>
+                    </div>
+
+
+                    <button type="submit" class="btn btn-secondary">Register</button>
+                    <input type="hidden" th:field="*{id}"/>
+                </form>
+            </div>
+        </div>
+
+        <div th:if="${userEditId !=null}" class="card-body">
+            <h1 class="card-title"> User Edit</h1>
+            <br>
+            <div class="mb-3">
+                <form action="#" th:action="@{/user/edit}"method="post" th:object="${userEditId}">
+                    <label class="col-form-label">FirstName:</label>
+                    <input class="form-control form-control-sm" type="text" th:field="*{firstName}"/><br/>
+
+                    <label class="col-form-label">LastName:</label>
+                    <input class="form-control form-control-sm" type="text" th:field="*{lastName}"/><br/>
+
+                    <label class="col-form-label">Email:</label>
+                    <input class="form-control form-control-sm" type="text" th:field="*{email}"/><br/>
+
+                    <label class="control-label" for="password"> Password </label>
+                    <input class="form-control" type="password" th:field="*{password}"  />
+
+                    <div class="form-group">
+                        <label class="col-form-label">Roles:</label> <br>
+                        <input class="form-check-input" type="checkbox" name="roles"
+                               th:each="role : ${roles}"
+                               th:text="${role.name}     "
+                               th:value="${role.id}"
+                               th:field="*{roles}"/>
+                    </div>
+
+                    <button type="submit" class="btn btn-secondary">Edit</button>
+                    <input type="hidden" th:field="*{id}"/>
+                </form>
+            </div>
+
+
+
+
+</body>
+</html>
